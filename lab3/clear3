@@ -1,0 +1,9 @@
+#!/bin/bash
+
+rm -f work3.log
+rm -rf /home/test1*
+gpasswd -d u1 g1
+userdel -rf u1
+userdel -rf u2
+groupdel g1
+

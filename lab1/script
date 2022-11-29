@@ -1,0 +1,114 @@
+#!/bin/sh
+#1 
+mkdir /home/test
+
+#2
+ls -F -a -A /etc > /home/test/list
+
+#3
+ls -F -a -A /etc | grep "/$" | wc -l >> /home/test/list
+ls -F -a -A /etc | grep "^\." | grep -v "/$" | wc -l >> /home/test/list
+
+#4
+mkdir /home/test/links
+
+#5
+ln /home/test/list /home/test/links/list_hlink
+
+#6
+ln -s /home/test/list /home/test/links/list_slink
+
+#7
+echo "hlink = "
+find . -samefile /home/test/links/list_hlink | wc -l
+echo "list = "
+find . -samefile /home/test/list |wc -l
+echo "slink = "
+find . -samefile /home/test/links/list_slink | wc -l
+
+#8
+wc -l /home/test/list >> /home/test/links/list_hlink
+
+#9
+if cmp /home/test/links/list_hlink /home/test/links/list_slink
+then
+echo "YES"
+fi
+
+#10
+mv /home/test/list /home/test/list1
+
+echo "___________________"
+
+#11
+if cmp /home/test/links/list_hlink /home/test/links/list_slink
+then
+echo "YES"
+fi
+echo "___________________"
+
+#12
+ln /home/test/links/list_hlink /home/list1
+
+#13
+find /etc -name "*.conf" > /home/list_conf
+
+#14
+find /etc -name "*.d" > /home/list_d
+
+#15
+cat /home/list_conf /home/list_d > /home/list_conf_d
+
+#16
+mkdir /home/test/.sub
+
+#17
+cp /home/list_conf_d /home/test/.sub/
+
+#18
+cp --backup=numbered /home/list_conf_d /home/test/.sub
+
+#19
+find /home/test
+
+#20
+man man > /home/man.txt
+
+#21
+split -b 1K /home/man.txt
+
+#22
+mkdir /home/man.dir
+
+#23
+mv /home/x* /home/man.dir
+
+#24
+cat /home/man.dir/x* > /home/man.dir/man.txt
+
+#25
+if diff /home/man.txt /home/man.dir/man.txt
+then
+echo "YES"
+fi
+
+#26
+echo -e "line\nline\nline" > /home/tmp
+cat /home/man.txt >> /home/tmp
+mv /home/tmp /home/man.txt
+echo -e "end\nend\nend" >> /home/man.txt
+
+#27
+diff -u /home/man.txt /home/man.dir/man.txt > /home/man.patch
+
+#28
+mv /home/man.patch /home/man.dir/
+
+#29
+patch < /home/man.dir/man.patch
+
+#30
+if diff /home/man.txt /home/man.dir/man.txt
+then
+echo "YES"
+fi
